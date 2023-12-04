@@ -5,7 +5,7 @@
 #include <glog/logging.h>
 #include <gtest/gtest.h>
 
-TEST(test_arma, add) {
+TEST(test_arma, add) { /// 加法
   using namespace arma;
   fmat in_matrix1 = "1,2,3;"
                     "4,5,6;"
@@ -23,7 +23,7 @@ TEST(test_arma, add) {
   ASSERT_EQ(approx_equal(out_matrix1, out_matrix2, "absdiff", 1e-5), true);
 }
 
-TEST(test_arma, sub) {
+TEST(test_arma, sub) { /// 减法
   using namespace arma;
   fmat in_matrix1 = "1,2,3;"
                     "4,5,6;"
@@ -41,7 +41,7 @@ TEST(test_arma, sub) {
   ASSERT_EQ(approx_equal(out_matrix1, out_matrix2, "absdiff", 1e-5), true);
 }
 
-TEST(test_arma, matmul) {
+TEST(test_arma, matmul) { // 矩阵乘法
   using namespace arma;
   fmat in_matrix1 = "1,2,3;"
                     "4,5,6;"
@@ -59,7 +59,7 @@ TEST(test_arma, matmul) {
   ASSERT_EQ(approx_equal(out_matrix1, out_matrix2, "absdiff", 1e-5), true);
 }
 
-TEST(test_arma, pointwise) {
+TEST(test_arma, pointwise) { ///< 点乘
   using namespace arma;
   fmat in_matrix1 = "1,2,3;"
                     "4,5,6;"
