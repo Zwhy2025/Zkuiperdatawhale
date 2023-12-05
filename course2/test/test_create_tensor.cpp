@@ -8,7 +8,14 @@
 TEST(test_tensor, tensor_init1D) {
   using namespace kuiper_infer;
   Tensor<float> f1(4);
+
+//  f1.data().print("自定义张量");
+
   f1.Fill(1.f);
+//  LOG(INFO) << "打印张量形状";
+//  for (auto it : f1.raw_shapes()) {
+//    LOG(INFO) << it;
+//  }
   const auto &raw_shapes = f1.raw_shapes();
   LOG(INFO) << "-----------------------Tensor1D-----------------------";
   LOG(INFO) << "raw shapes size: " << raw_shapes.size();
