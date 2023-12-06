@@ -15,8 +15,8 @@ TEST(test_fill_reshape, reshape1) {
     for (int i = 0; i < 24; ++i) {
         values.at(i) = float(i + 1);
     }
-    f1.Fill(values, false);
     f1.Show();
+    f1.Fill(values, false);
     /// 将大小调整为(4, 3, 2)
     f1.Reshape({4, 3, 2},false);
     LOG(INFO) << "-------------------After Reshape-------------------";

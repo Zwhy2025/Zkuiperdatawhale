@@ -169,7 +169,23 @@ namespace kuiper_infer {
         uint32_t pad_cols1 = pads.at(2);  // left
         uint32_t pad_cols2 = pads.at(3);  // right
 
-        // 请补充代码
+        /** 直接申请填充后的内存 */
+        arma::Cube<float> new_data(this->rows()+ pad_rows1+pad_rows2,
+                                   this->cols()+ pad_cols1+pad_cols2,
+                                   this->data_.n_slices);
+        /** 先把所有值都替换成padding值 */
+        new_data.fill(padding_value);
+
+        /** 从三维立方块中取出先前子块大小的数据的引用，并替换成先前的数据*/
+        new_data.subcube(pad_rows1,pad_cols1,0,
+                         new_data.n_rows -pad_rows2-1,new_data.n_cols-pad_cols2-1,new_data.n_slices-1)
+                         = this->data_;
+        /** 将指向我们我们构造的数据的指针重定向为原来的位置 */
+        this->data_ =std::move(new_data);
+
+        /** 将形状同步改变 */
+        this->raw_shapes_ = std::vector<uint32_t>{this->channels(), this->rows(), this->cols()};
+
     }
 
     void Tensor<float>::Fill(float value) {
@@ -217,12 +233,7 @@ namespace kuiper_infer {
 
     void Tensor<float>::Flatten(bool row_major) {
         CHECK(!this->data_.empty());
-
-        if (row_major){
-
-        } else{
-
-        }
+        this->raw_shapes_ = {size()};
         // 请补充代码
     }
 

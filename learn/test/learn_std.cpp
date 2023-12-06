@@ -4,8 +4,6 @@
 
 #include <glog/logging.h>
 #include <gtest/gtest.h>
-
-
 #include <numeric>
 TEST(std,accumulate){
     std::vector<int> v{1,2,3,4,5};
@@ -17,11 +15,13 @@ TEST(std,accumulate){
 
     // 使用 lambda 表达式定义乘法操作
     auto multiplication = [](int x, int y) { return x * y; };
+
     // 使用 accumulate 进行乘法累积
     res = std::accumulate(v.begin(), v.end(), 1, multiplication);
     LOG(INFO) << "计算1累乘到5,res: " << res;
     res = std::accumulate(v.begin(), v.end(), 1, std::multiplies<int>());
     LOG(INFO) << "计算1累乘到5,使用标准库自带的仿函数,res: " << res;
+
     /**
      * multiplies需要指定模板类型
      * C++17之后可以自动推导
