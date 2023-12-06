@@ -177,23 +177,33 @@ namespace kuiper_infer {
         this->data_.fill(value);
     }
 
+    /**
+     * @brief 使用传入的数组填充Tensor
+     * @param values     data
+     * @param row_major  是否按行优先填充
+     */
     void Tensor<float>::Fill(const std::vector<float> &values, bool row_major) {
         CHECK(!this->data_.empty());
         const uint32_t total_elems = this->data_.size();
         CHECK_EQ(values.size(), total_elems);
+
         if (row_major) {
-            const uint32_t rows = this->rows();
-            const uint32_t cols = this->cols();
-            const uint32_t planes = rows * cols;
-            const uint32_t channels = this->data_.n_slices;
+            /** 获取必要参数 */
+            const uint32_t rows = this->rows();               ///< 每个行数
+            const uint32_t cols = this->cols();               ///< 每个列数
+            const uint32_t planes = rows * cols;              ///< 每个通道的元素总数
+            const uint32_t channels = this->data_.n_slices;   ///< 通道数
 
             for (uint32_t i = 0; i < channels; ++i) {
+                /** 获取每个通道平面的所有元素矩阵 */
                 auto &channel_data = this->data_.slice(i);
-                const arma::fmat &channel_data_t =
-                        arma::fmat(values.data() + i * planes, this->cols(), this->rows());
+                /** 这里每次都会从数组构造一平面的矩阵,荣誉 */
+                const arma::fmat &channel_data_t =arma::fmat(values.data() + i * planes, this->cols(), this->rows());
+                /** 矩阵翻转来解决行列主序的问题 */
                 channel_data = channel_data_t.t();
             }
         } else {
+            /** 由于armadillo底层是按照列主序存储的，所以这里只需原样拷贝即可 */
             std::copy(values.begin(), values.end(), this->data_.memptr());
         }
     }
@@ -207,6 +217,12 @@ namespace kuiper_infer {
 
     void Tensor<float>::Flatten(bool row_major) {
         CHECK(!this->data_.empty());
+
+        if (row_major){
+
+        } else{
+
+        }
         // 请补充代码
     }
 
@@ -237,8 +253,11 @@ namespace kuiper_infer {
         CHECK(!this->data_.empty());
         CHECK(!shapes.empty());
         const uint32_t origin_size = this->size();
-        const uint32_t current_size =
-                std::accumulate(shapes.begin(), shapes.end(), 1, std::multiplies());
+        /** 计算变型目标的形状 元素总数 */
+        const uint32_t current_size =std::accumulate(shapes.begin(),
+                                                     shapes.end(),
+                                                     1,
+                                                     std::multiplies());
         CHECK(shapes.size() <= 3);
         CHECK(current_size == origin_size);
 
@@ -246,6 +265,7 @@ namespace kuiper_infer {
         if (row_major) {
             values = this->values(true);
         }
+
         if (shapes.size() == 3) {
             this->data_.reshape(shapes.at(1), shapes.at(2), shapes.at(0));
             this->raw_shapes_ = {shapes.at(0), shapes.at(1), shapes.at(2)};
@@ -274,8 +294,11 @@ namespace kuiper_infer {
         return this->data_.memptr() + offset;
     }
 
+    /** 获取所有元素 */
     std::vector<float> Tensor<float>::values(bool row_major) {
         CHECK_EQ(this->data_.empty(), false);
+
+        /** 提前申请空间 */
         std::vector<float> values(this->data_.size());
 
         if (!row_major) {

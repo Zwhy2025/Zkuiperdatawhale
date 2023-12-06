@@ -9,6 +9,7 @@ TEST(test_homework, homework1_flatten1) {
   using namespace kuiper_infer;
   Tensor<float> f1(2, 3, 4);
   f1.Flatten(true);
+
   ASSERT_EQ(f1.raw_shapes().size(), 1);
   ASSERT_EQ(f1.raw_shapes().at(0), 24);
 }
